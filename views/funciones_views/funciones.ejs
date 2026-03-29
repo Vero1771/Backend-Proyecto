@@ -1,0 +1,81 @@
+<%-include("../components/head.ejs")%>
+  <body>
+
+    <%-include("../components/nav.ejs")%>
+
+    <main>
+      <h1><%= title %></h1>
+
+      <% if(funciones_list.length <= 0) { %>
+        <h2>No hay funciones registradas</h1>
+      <% }  %>
+
+      <table>
+          <thead>
+              <tr>
+                  <th>ID</th>
+                  <th>Película</th>
+                  <th>Sala</th>
+                  <th>Fecha y Hora</th>
+                  <% if (user && user.rol === 'admin') { %>
+                    <th>Administrar</th>
+                  <% } %>
+              </tr>
+          </thead>
+          <tbody>
+              <% funciones_list.forEach((f, i) => { %>
+                  <tr>
+                    <td><%= f.id_funcion %></td>
+                    <td><%= f.titulo %></td>
+                    <td><%= f.nombre %></td>
+                    <td><%= f.fecha_hora.toLocaleString('es-ES', { dateStyle: 'short', timeStyle: 'short' }) %></td>
+
+                  <% if (user && user.rol === 'admin') { %>
+                    <td>    
+                      <div class="botonera">
+                        <a class="botonera__opcion opcion__editar" href="/funciones/actualizar/<%= f.id_funcion %>" class="button">Editar</a>
+                        <button class="botonera__opcion opcion__eliminar" onclick="eliminarFuncion(this, '<%= f.id_funcion %>')"> X </button> 
+                      </div>
+                    </td>
+                  <% } %>
+
+                  </tr>
+              <% }); %>
+          </tbody>
+      </table>
+       
+      <script>
+        async function eliminarFuncion(boton, id) {
+          if (!confirm('¿Estás seguro de eliminar esta función?')) return;
+
+          try {
+            const response = await fetch(`/funciones/eliminar/${id}`, {
+              method: 'DELETE', 
+              headers: {
+                'Content-Type': 'application/json'
+              }
+            });
+
+            if (response.ok) {
+              const fila = boton.closest('tr'); //eliminar la fila de la tabla sin recargar
+              fila.remove();
+                  
+              const tbody = document.querySelector('tbody');
+              if (tbody.children.length === 0) {
+                location.reload(); 
+              }
+            } else {
+              alert('Error al eliminar la función \n Posiblemente tenga relación con otra entidad');
+            }
+          } catch (error) {
+            console.error('Error:', error);
+            alert('Hubo un problema con la conexión');
+          }
+        }
+      </script>
+
+    </main>
+
+  </body>
+
+<%-include("../components/footer.ejs")%>

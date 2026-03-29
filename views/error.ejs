@@ -1,0 +1,12 @@
+<%-include("./components/head.ejs")%>
+  <body>
+    <%-include("./components/nav.ejs")%>
+    <main>
+      <h1 class="error__h1"><%= code %></h1>
+      <h2>¡Oops! Ha ocurrido un problema</h2>
+      <h3><%= title %></h3>
+      <p class="error__p"><%= message %></p>
+    </main>
+  </body>
+
+<%-include("./components/footer.ejs")%>

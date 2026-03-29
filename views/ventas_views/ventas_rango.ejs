@@ -1,0 +1,103 @@
+<%-include("../components/head.ejs")%>
+<body>
+  <%-include("../components/nav.ejs")%>
+
+  <main>
+    <h1><%= title %></h1>
+
+    <section class="filtros">
+      <form action="/ventas/ver-rango" method="GET">
+        <label>Inicio:</label>
+        <input type="date" name="inicio" required>
+        <label>Fin:</label>
+        <input type="date" name="fin" required>
+        <button type="submit">Filtrar</button>
+      </form>
+    </section>
+
+    <% if(typeof error_msg !== 'undefined' && error_msg) { %>
+      <div>
+        <strong>¡Atención!</strong> <%= error_msg %>
+      </div>
+    <% } %>
+
+    <hr>
+
+    <% if(ventas_list && ventas_list.length > 0) { %>
+      <table>
+          <thead>
+              <tr>
+                  <th>ID de Venta</th>
+                  <th>Método de Pago</th>
+                  <th>Fecha</th>
+                  <th>Total</th>
+                  <th>Administrar</th>
+              </tr>
+          </thead>
+          <tbody>
+              <% ventas_list.forEach((v) => { %>
+                  <tr>
+                    <td><%= v.id_venta %> </td>
+                    <td><%= v.metodo_de_pago %> </td>
+                    <td>
+                      <%= (v.fecha instanceof Date) ? v.fecha.toLocaleString('es-ES') : v.fecha %>
+                    </td>
+                    <td>$<%= v.total %> </td>
+                    <td>    
+                      <div class="botonera">
+                        <a class="botonera__opcion opcion__editar" href="/ventas/actualizar/<%= v.id_venta %>" class="button">Editar</a>
+                        <button class="botonera__opcion opcion__eliminar" onclick="eliminarVenta(this, '<%= v.id_venta %>')"> X </button> 
+                      </div>
+                    </td>
+                  </tr>
+              <% }); %>
+          </tbody>
+      </table>
+    <% } else if (typeof error_msg === 'undefined' || !error_msg) { %>
+      <p>No se encontraron registros para mostrar.</p>
+    <% } %>
+
+    <script>
+      const form = document.querySelector('form');
+      form.addEventListener('submit', (e) => {
+        const inicio = document.getElementsByName('inicio')[0].value;
+        const fin = document.getElementsByName('fin')[0].value;
+
+        if (new Date(inicio) > new Date(fin)) {
+          e.preventDefault();
+          alert('La fecha de inicio no puede ser mayor a la fecha de fin.');
+        }
+      });
+
+      async function eliminarVenta(boton, id) {
+        if (!confirm('¿Estás seguro de eliminar esta venta?')) return;
+
+        try {
+          const response = await fetch(`/ventas/eliminar/${id}`, {
+            method: 'DELETE', 
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          });
+
+          if (response.ok) {
+            const fila = boton.closest('tr'); //eliminar la fila de la tabla sin recargar
+            fila.remove();
+                  
+            const tbody = document.querySelector('tbody');
+            if (tbody.children.length === 0) {
+              location.reload(); 
+            }
+          } else {
+            alert('Error al eliminar la venta');
+          }
+        } catch (error) {
+          console.error('Error:', error);
+          alert('Hubo un problema con la conexión');
+        }
+      }
+    </script>
+    
+  </main>
+</body>
+<%-include("../components/footer.ejs")%>

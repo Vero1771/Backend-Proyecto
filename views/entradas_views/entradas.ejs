@@ -1,0 +1,85 @@
+<%-include("../components/head.ejs")%>
+  <body>
+
+    <%-include("../components/nav.ejs")%>
+
+    <main>
+      <h1><%= title %></h1>
+
+      <% if(entradas_list.length <= 0) { %>
+        <h2>No hay entradas registradas</h1>
+      <% }  %>
+
+      <table>
+          <thead>
+              <tr>
+                  <th>ID</th>
+                  <th>Película</th>
+                  <th>Sala</th>
+                  <th>Asiento</th>
+                  <th>Fecha Función</th>
+                  <th>Precio</th>
+                  <% if (user && user.rol === 'admin') { %>
+                    <th>Administrar</th>
+                  <% } %>
+              </tr>
+          </thead>
+          <tbody>
+              <% entradas_list.forEach((e, i) => { %>
+                  <tr>
+                    <td><%= e.id_entrada %></td>
+                    <td><%= e.pelicula %></td>
+                    <td><%= e.sala %></td>
+                    <td><%= e.asiento %></td>
+                    <td><%= e.fecha_funcion.toLocaleString('es-ES', { dateStyle: 'short', timeStyle: 'short' }) %></td>
+                    <td><%= e.precio %></td>
+
+                    <% if (user && user.rol === 'admin') { %>
+                      <td>    
+                        <div class="botonera">
+                          <a class="botonera__opcion opcion__editar" href="/entradas/actualizar/<%= e.id_entrada %>" class="button">Editar</a>
+                          <button class="botonera__opcion opcion__eliminar" onclick="eliminarEntrada(this, '<%= e.id_entrada %>')"> X </button> 
+                        </div>
+                      </td>
+                    <% } %>
+
+                  </tr>
+              <% }); %>
+          </tbody>
+      </table>
+      
+      <script>
+        async function eliminarEntrada(boton, id) {
+          if (!confirm('¿Estás seguro de eliminar esta entrada?')) return;
+
+          try {
+            const response = await fetch(`/entradas/eliminar/${id}`, {
+              method: 'DELETE', 
+              headers: {
+                'Content-Type': 'application/json'
+              }
+            });
+
+            if (response.ok) {
+              const fila = boton.closest('tr'); //eliminar la fila de la tabla sin recargar
+              fila.remove();
+                  
+              const tbody = document.querySelector('tbody');
+              if (tbody.children.length === 0) {
+                location.reload(); 
+              }
+            } else {
+              alert('Error al eliminar la entrada \n Posiblemente tenga relación con otra entidad');
+            }
+          } catch (error) {
+            console.error('Error:', error);
+            alert('Hubo un problema con la conexión');
+          }
+        }
+      </script>
+
+    </main>
+
+  </body>
+
+<%-include("../components/footer.ejs")%>

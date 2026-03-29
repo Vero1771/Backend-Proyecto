@@ -1,0 +1,96 @@
+<%-include("../components/head.ejs")%>
+
+  <body>
+
+    <%-include("../components/nav.ejs")%>
+    <main>
+      <h1>Ingresar <%= title %></h1>
+
+      <form class="formEntidad" id="formIngresarFuncion">
+
+        <div>
+          <label for="id_pelicula">Elige una Película</label><br>
+          <% if(peliculas_list.length > 0) { %>
+            <select name="id_pelicula" id="id_pelicula" required>
+              <option value="" disabled selected>Selecciona una película...</option>
+              <% peliculas_list.forEach((p) => { %>
+                <option value="<%= p.id_pelicula %>">
+                  <%= p.titulo %>
+                </option>
+              <% }); %>
+            </select>
+          <% } else { %>
+            <p>No hay películas para asignar</p>
+          <% } %>
+        </div>
+
+        <br>
+
+        <div>
+          <label for="id_sala">Elige una Sala</label><br>
+          <% if(salas_list.length > 0) { %>
+            <select name="id_sala" id="id_sala" required>
+              <option value="" disabled selected>Selecciona una sala...</option>
+              <% salas_list.forEach((s) => { %>
+                <option value="<%= s.id_sala %>">
+                  <%= s.nombre %>
+                </option>
+              <% }); %>
+            </select>
+          <% } else { %>
+            <p>No hay salas para asignar</p>
+          <% } %>
+        </div>
+
+        <br>
+
+        <div>
+          <label for="fecha_hora">Fecha y Hora de la Función</label><br>
+          <input type="datetime-local" 
+                id="fecha_hora" 
+                name="fecha_hora" 
+                required>
+        </div>
+        
+        <br>
+
+        <button class="formEntidad__submit" type="button" onclick="enviarFormulario()">Enviar</button>
+
+      </form>
+
+      <script>
+        async function enviarFormulario() {
+          const data = {
+            id_pelicula: document.getElementById('id_pelicula').value,
+            id_sala: document.getElementById('id_sala').value,
+            fecha_hora: document.getElementById('fecha_hora').value
+          };
+
+          try {
+            const response = await fetch('/funciones/ingresar', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(data)
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+              alert("Función ingresada con éxito");
+              window.location.href = '/funciones'; // Redirigir a la lista  
+            } else {
+              // Si el servidor responde con 400 mostrar los mensajes de error
+              const mensajesError = result.result.join("\n"); 
+              alert("Error en la validación:\n" + mensajesError);
+            }
+          } catch (error) {
+            console.error("Error en la petición:", error); 
+            alert("Ocurrió un error inesperado en el servidor.");
+          }
+        }
+      </script>
+
+    </main>
+  </body>
+
+  <%-include("../components/footer.ejs")%>

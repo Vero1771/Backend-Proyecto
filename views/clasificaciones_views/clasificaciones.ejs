@@ -1,0 +1,68 @@
+<%-include("../components/head.ejs")%>
+  <body>
+
+    <%-include("../components/nav.ejs")%>
+    <main>
+      <h1><%= title %></h1>
+
+      <% if(clasificaciones_list.length <= 0) { %>
+        <h2>No hay clasificaciones registradas</h2>
+      <% }  %>
+
+      <table>
+          <thead>
+              <tr>
+                  <th>ID</th>
+                  <th>Nombre</th>
+                  <th>Administrar</th>
+              </tr>
+          </thead>
+          <tbody>
+              <% clasificaciones_list.forEach((c, i) => { %>
+                  <tr>
+                      <td><%= c.id_clasificacion %></td>
+                      <td><%= c.nombre %></td>
+                      <td>    
+                        <div class="botonera">
+                          <a class="botonera__opcion opcion__editar" href="/clasificaciones/actualizar/<%= c.id_clasificacion %>" class="button">Editar</a>
+                          <button class="botonera__opcion opcion__eliminar" onclick="eliminarClasificacion(this, '<%= c.id_clasificacion %>')"> X </button>
+                        </div>
+                      </td>
+                  </tr>
+              <% }); %>
+          </tbody>
+      </table>
+
+      <script>
+        async function eliminarClasificacion(boton, id) {
+          if (!confirm('¿Estás seguro de eliminar esta clasificación?')) return;
+
+          try {
+            const response = await fetch(`/clasificaciones/eliminar/${id}`, {
+              method: 'DELETE', 
+              headers: {
+                'Content-Type': 'application/json'
+              }
+            });
+
+            if (response.ok) {
+              const fila = boton.closest('tr'); //eliminar la fila de la tabla sin recargar
+              fila.remove();
+                  
+              const tbody = document.querySelector('tbody');
+              if (tbody.children.length === 0) {
+                location.reload(); 
+              }
+            } else {
+              alert('Error al eliminar la clasificación \n Posiblemente tenga relación con otra entidad');
+            }
+          } catch (error) {
+            console.error('Error:', error);
+            alert('Hubo un problema con la conexión');
+          }
+        }
+      </script>
+    </main>
+  </body>
+
+<%-include("../components/footer.ejs")%>

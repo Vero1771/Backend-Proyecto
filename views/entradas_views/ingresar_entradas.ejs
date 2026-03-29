@@ -1,0 +1,96 @@
+<%-include("../components/head.ejs")%>
+
+  <body>
+    <%-include("../components/nav.ejs")%>
+    <main>
+      <h1>Ingresar <%= title %></h1>
+
+      <div class="formEntidad">   
+        
+
+        <div class="row">
+          <label>Seleccionar Función:</label>
+            <select id="id_funcion_master">
+              <% funciones_list.forEach(f => { %>
+                <option value="<%= f.id_funcion %>">
+                  <%= f.titulo %> - <%= f.fecha_hora.toLocaleString('es-ES', { dateStyle: 'short', timeStyle: 'short' }) %>
+                </option>
+              <% }) %>
+            </select>
+          </div><br>
+
+        <div id="mapa-asientos">
+          <label>Elegir Asientos</label>
+            <div class="check__list">
+              <% if(asientos_list.length > 0) { %>
+                <% asientos_list.forEach((a) => { %>
+
+                  <label>
+                    <input type="checkbox" class="asiento-check" value="<%= a.id_asiento %>">
+                    <%= a.nombre %>
+                  </label>
+
+                <% }); %>
+              <% } else { %>
+                <p>No hay Asientos para asignar</p>
+              <% } %>
+            </div>
+
+        </div><br>
+
+        <label for="precio">Precio Cobrado:</label>
+        <input type="number" step="0.01" name="precio" id="id_precio_entradas"><br>
+
+        <button class="formEntidad__submit" type="button" onclick="enviarVenta()">Finalizar Venta</button>
+      </div>
+
+
+      <script>
+        async function enviarVenta() {
+            const id_funcion = document.getElementById('id_funcion_master').value;
+            const precio = document.getElementById('id_precio_entradas').value;
+
+            // Obtener los checkboxs marcados
+            const asientosSeleccionados = Array.from(document.querySelectorAll('.asiento-check:checked'))
+                .map(cb => ({
+                    id_funcion: parseInt(id_funcion),
+                    id_asiento: parseInt(cb.value),
+                    precio: parseFloat(precio)
+                }));
+
+            if (asientosSeleccionados.length === 0) {
+              return alert("Debes seleccionar al menos un asiento");
+            }
+
+            const data = {
+              entradas: asientosSeleccionados
+            };
+
+            try {
+              const response = await fetch('/entradas/ingresar', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+              });
+
+              const result = await response.json();
+
+              if (response.ok) {
+                alert("Entradas registradas con éxito");
+                window.location.href = '/entradas/disponibles'; // Redirigir a la lista  
+              } else {
+                // Si el servidor responde con 400 mostrar los mensajes de error
+                const mensajesError = result.result.join("\n"); 
+                alert("Error en la validación:\n" + mensajesError);
+              }
+            } catch (error) {
+              console.error("Error en la petición:", error); 
+              alert("Ocurrió un error inesperado en el servidor.");
+            }
+        }
+      </script>
+
+    </main>
+  </body>
+
+  <%-include("../components/footer.ejs")%>

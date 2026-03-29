@@ -1,0 +1,81 @@
+<%-include("../components/head.ejs")%>
+  <body>
+
+    <%-include("../components/nav.ejs")%>
+    <main>
+      <h1><%= title %></h1>
+
+      <% if(productos_list.length <= 0) { %>
+        <h2>No hay productos registrados</h2>
+      <% }  %>
+
+      <table>
+          <thead>
+              <tr>
+                  <th>ID</th>
+                  <th>Nombre</th>
+                  <th>Cantidad</th>
+                  <th>Precio Unitario</th>
+                  <th>En Stock</th>
+                  <% if (user && user.rol === 'admin') { %>
+                    <th>Administrar</th>
+                  <% } %>
+              </tr>
+          </thead>
+          <tbody>
+              <% productos_list.forEach((p, i) => { %>
+                  <tr>
+                      <td><%= p.id_producto %></td>
+                      <td><%= p.nombre %></td>
+                      <td><%= p.cantidad %></td>
+                      <td><%= p.precio_unitario %></td>
+                      <td><%= p.en_stock %></td>
+
+                      <% if (user && user.rol === 'admin') { %>
+                        <td>    
+                          <div class="botonera">
+                            <a class="botonera__opcion opcion__editar" href="/productos/actualizar/<%= p.id_producto %>" class="button">Editar</a>
+                            <button class="botonera__opcion opcion__eliminar" onclick="eliminarProducto(this, '<%= p.id_producto %>')"> X </button> 
+                          </div>
+                        </td>
+                      <% } %>
+
+                  </tr>
+              <% }); %>
+          </tbody>
+      </table>
+
+       <script>
+        async function eliminarProducto(boton, id) {
+          if (!confirm('¿Estás seguro de eliminar este producto?')) return;
+
+          try {
+            const response = await fetch(`/productos/eliminar/${id}`, {
+              method: 'DELETE', 
+              headers: {
+                'Content-Type': 'application/json'
+              }
+            });
+
+            if (response.ok) {
+              const fila = boton.closest('tr'); //eliminar la fila de la tabla sin recargar
+              fila.remove();
+                  
+              const tbody = document.querySelector('tbody');
+              if (tbody.children.length === 0) {
+                location.reload(); 
+              }
+            } else {
+              alert('Error al eliminar el producto \n Posiblemente tenga relación con otra entidad');
+            }
+          } catch (error) {
+            console.error('Error:', error);
+            alert('Hubo un problema con la conexión');
+          }
+        }
+      </script>
+
+    </main>
+  </body>
+
+<%-include("../components/footer.ejs")%>

@@ -1,0 +1,75 @@
+<%-include("../components/head.ejs")%>
+  <body>
+
+    <%-include("../components/nav.ejs")%>
+
+    <main>
+      <h1><%= title %></h1>
+
+      <% if(usuarios_list.length <= 0) { %>
+        <h2>No hay usuarios registrados</h1>
+      <% }  %>
+
+      <table>
+          <thead>
+              <tr>
+                  <th>ID</th>
+                  <th>Email</th>
+                  <th>Rol</th>
+                  <th>Administrar</th>
+              </tr>
+          </thead>
+          <tbody>
+              <% usuarios_list.forEach((u, i) => { %>
+                  <tr>
+                    <td><%= u.id_usuario %></td>
+                    <td><%= u.email %></td>
+                    <td><%= u.rol %></td>
+                    <td>    
+                      <div class="botonera">
+                        <a class="botonera__opcion opcion__editar" href="/usuarios/actualizar/<%= u.id_usuario %>" class="button">Editar</a>
+                        <% if(u.id_usuario != 1) { %>
+                          <button class="botonera__opcion opcion__eliminar" onclick="eliminarUsuario(this, '<%= u.id_usuario %>')"> X </button> 
+                        <% }  %>
+                      </div>
+                    </td>
+                  </tr>
+              <% }); %>
+          </tbody>
+      </table>
+      
+      <script>
+        async function eliminarUsuario(boton, id) {
+          if (!confirm('¿Estás seguro de eliminar este usuario?')) return;
+
+          try {
+            const response = await fetch(`/usuarios/eliminar/${id}`, {
+              method: 'DELETE', 
+              headers: {
+                'Content-Type': 'application/json'
+              }
+            });
+
+            if (response.ok) {
+              const fila = boton.closest('tr'); //eliminar la fila de la tabla sin recargar
+              fila.remove();
+                  
+              const tbody = document.querySelector('tbody');
+              if (tbody.children.length === 0) {
+                location.reload(); 
+              }
+            } else {
+              alert('Error al eliminar el usuario');
+            }
+          } catch (error) {
+            console.error('Error:', error);
+            alert('Hubo un problema con la conexión');
+          }
+        }
+      </script>
+
+    </main>
+
+  </body>
+
+<%-include("../components/footer.ejs")%>

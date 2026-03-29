@@ -1,0 +1,91 @@
+<%-include("../components/head.ejs")%>
+  <body>
+
+    <%-include("../components/nav.ejs")%>
+    <main>
+      <h1><%= title %></h1>
+
+      <% if(peliculas_list.length <= 0) { %>
+        <h2>No hay películas registradas</h2>
+      <% }  %>
+
+      <table>
+          <thead>
+              <tr>
+                  <th>ID</th>
+                  <th>Título</th>
+                  <th>Año</th>
+                  <th>Duración</th>
+                  <th>Categorías</th>
+                  <th>Clasificación</th>
+                  <% if (user && user.rol === 'admin') { %>
+                    <th>Administrar</th>
+                  <% } %>
+              </tr>
+          </thead>
+          <tbody>
+              <% peliculas_list.forEach((peli, i) => { %>
+                  <tr>
+                      <td><%= peli.id_pelicula %></td>
+                      <td><%= peli.titulo %></td>
+                      <td><%= peli.anio %></td>
+                      <td><%= peli.duracion %></td>
+                      <td>
+                        <% peli.categorias.forEach((cat, e) => { %>
+
+                          <%if(e != 0){ %> , <% }%>
+
+                          <%=cat.nombre_categoria%>
+                          
+                        <% }); %>
+                      </td>
+                      <td><%= peli.clasificacion %></td>
+
+                      <% if (user && user.rol === 'admin') { %>
+                        <td>    
+                          <div class="botonera">
+                            <a class="botonera__opcion opcion__editar" href="/peliculas/actualizar/<%= peli.id_pelicula %>" class="button">Editar</a>                        
+                            <button class="botonera__opcion opcion__eliminar" onclick="eliminarPelicula(this, '<%= peli.id_pelicula %>')"> X </button> 
+                          </div>
+                        </td>
+                      <% } %>
+
+                  </tr>
+              <% }); %>
+          </tbody>
+      </table>
+
+        <script>
+        async function eliminarPelicula(boton, id) {
+          if (!confirm('¿Estás seguro de eliminar esta película?')) return;
+
+          try {
+            const response = await fetch(`/peliculas/eliminar/${id}`, {
+              method: 'DELETE', 
+              headers: {
+                'Content-Type': 'application/json'
+              }
+            });
+
+            if (response.ok) {
+              const fila = boton.closest('tr'); //eliminar la fila de la tabla sin recargar
+              fila.remove();
+                  
+              const tbody = document.querySelector('tbody');
+              if (tbody.children.length === 0) {
+                location.reload(); 
+              }
+            } else {
+              alert('Error al eliminar la película \n Posiblemente tenga relación con otra entidad');
+            }
+          } catch (error) {
+            console.error('Error:', error);
+            alert('Hubo un problema con la conexión');
+          }
+        }
+      </script>
+
+    </main>
+  </body>
+
+<%-include("../components/footer.ejs")%>

@@ -1,0 +1,15 @@
+<%-include("./components/head.ejs")%>
+  <body>
+    <%-include("./components/nav.ejs")%>
+    <main>
+      <h1><%= title %></h1>
+      <p>Welcome to <%= title %></p>
+
+      <% if (user) { %>
+        <p>Sesión iniciada como: <%= user.email %></p>
+      <% } %>
+
+    </main>
+  </body>
+
+<%-include("./components/footer.ejs")%>
