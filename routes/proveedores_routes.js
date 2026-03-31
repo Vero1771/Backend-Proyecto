@@ -40,4 +40,51 @@ router.delete('/eliminar/:id', checkLoginAdmin, function (req, res, next) {
 
 /* VIEWS EJS */
 
+/* (GET) Todos los proveedores */
+router.get('/', function (req, res, next) {
+  Proveedores_Controller.mostrar_proveedores()
+    .then((r) => {
+      res.render('./proveedores_views/proveedores', { title: 'Proveedores', proveedores_list: r.result });
+    })
+    .catch(err => {
+      res.status(500).render('error', {
+        title: 'Error del Servidor',
+        code: 500,
+        message: 'No pudimos conectar con la base de datos'
+      });
+    });
+});
+
+/* (POST) */
+router.get('/ingresar', checkLoginAdmin, function (req, res, next) {
+  res.render('./proveedores_views/ingresar_proveedores', { title: 'Proveedores' });
+});
+
+/* (PUT) Mostrar formulario de edición */
+router.get('/actualizar/:id', checkLoginAdmin, function (req, res, next) {
+  Proveedores_Controller.mostrar_proveedores_por_id(req.params.id)
+    .then((r) => {
+
+      if (r.code === 404) {
+        return res.status(404).render('error', {
+          title: 'Proveedor no encontrado',
+          code: 404,
+          message: r.message
+        });
+      }
+
+      res.render('./proveedores_views/editar_proveedores', {
+        title: 'Editar Proveedor',
+        proveedor: r.result[0]
+      });
+    })
+    .catch(err => {
+      res.status(500).render('error', {
+        title: 'Error del Servidor',
+        code: 500,
+        message: 'No pudimos conectar con la base de datos'
+      });
+    });
+});
+
 module.exports = router;
