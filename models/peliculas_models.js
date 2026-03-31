@@ -22,10 +22,13 @@ class PeliculasModel {
     const peliculasAgrupadas = {};
 
     list.forEach(element => {
-      const { id_pelicula, titulo, anio, duracion, id_clasificacion, clasificacion, nombre_categoria, id_categoria } = element;
+      const {
+        id_pelicula, titulo, anio, duracion, id_clasificacion, clasificacion,
+        nombre_categoria, id_categoria,
+        id_director, nombre_director, apellido_director
+      } = element;
 
-      // Iniciar un nuevo objeto para cada película
-      if (!peliculasAgrupadas[id_pelicula]) {
+      if (!peliculasAgrupadas[id_pelicula]) { //Formato del objeto final
         peliculasAgrupadas[id_pelicula] = {
           id_pelicula,
           titulo,
@@ -33,30 +36,50 @@ class PeliculasModel {
           duracion,
           id_clasificacion,
           clasificacion,
-          categorias: []
+          categorias: [],
+          directores: [] // Nueva propiedad para directores
         };
       }
 
-      // Agregar la categoría actual al array de esa película
-      peliculasAgrupadas[id_pelicula].categorias.push({
-        id_categoria: id_categoria,
-        nombre_categoria: nombre_categoria
-      });
+      //Agregar la categoría solo si existe y NO ha sido agregada ya
+      if (id_categoria && !peliculasAgrupadas[id_pelicula].categorias.some(c => c.id_categoria === id_categoria)) {
+        peliculasAgrupadas[id_pelicula].categorias.push({
+          id_categoria: id_categoria,
+          nombre_categoria: nombre_categoria
+        });
+      }
+
+      //Agregar el director solo si existe y NO ha sido agregado ya
+      if (id_director && !peliculasAgrupadas[id_pelicula].directores.some(d => d.id_director === id_director)) {
+        peliculasAgrupadas[id_pelicula].directores.push({
+          id_director: id_director,
+          nombre: nombre_director,
+          apellido: apellido_director
+        });
+      }
     });
 
     return Object.values(peliculasAgrupadas);
   }
   static _categoriasEntradaList(categorias_list) {
-    if (typeof(categorias_list) === "string") { //En caso de que llegue una categoría por el checkbox
+    if (typeof (categorias_list) === "string") { //En caso de que llegue una categoría por el checkbox
       categorias_list = [categorias_list];
     } else if (!categorias_list) {
       categorias_list = []; // En caso de que no se marque ninguna
     }
     return categorias_list;
   }
+  static _directoresEntradaList(directores_list) {
+    if (typeof (directores_list) === "string") { //En caso de que llegue un director por el checkbox
+      directores_list = [directores_list];
+    } else if (!directores_list) {
+      directores_list = []; // En caso de que no se marque ninguno
+    }
+    return directores_list;
+  }
   static mostrar_peliculas() {
     return new Promise((resolve, reject) => {
-      pool.query('SELECT peliculas.id_pelicula, peliculas.titulo, peliculas.anio, peliculas.duracion, clasificacion_peliculas.id_clasificacion, clasificacion_peliculas.nombre AS clasificacion, categorias.id_categoria, categorias.nombre AS nombre_categoria FROM `peliculas` LEFT JOIN `clasificacion_peliculas` ON peliculas.id_clasificacion = clasificacion_peliculas.id_clasificacion LEFT JOIN `peliculas_categorias` ON peliculas.id_pelicula = peliculas_categorias.id_pelicula LEFT JOIN `categorias` ON categorias.id_categoria = peliculas_categorias.id_categoria ORDER BY peliculas.id_pelicula;')
+      pool.query('SELECT peliculas.id_pelicula, peliculas.titulo, peliculas.anio, peliculas.duracion, clasificacion_peliculas.id_clasificacion, clasificacion_peliculas.nombre AS clasificacion, categorias.id_categoria, categorias.nombre AS nombre_categoria, directores.id_director, directores.nombre AS nombre_director, directores.apellido AS apellido_director FROM `peliculas` LEFT JOIN `clasificacion_peliculas` ON peliculas.id_clasificacion = clasificacion_peliculas.id_clasificacion LEFT JOIN `peliculas_categorias` ON peliculas.id_pelicula = peliculas_categorias.id_pelicula LEFT JOIN `categorias` ON categorias.id_categoria = peliculas_categorias.id_categoria LEFT JOIN `peliculas_directores` ON peliculas.id_pelicula = peliculas_directores.id_pelicula LEFT JOIN `directores` ON directores.id_director = peliculas_directores.id_director ORDER BY peliculas.id_pelicula')
         .then(([rows]) => {
           const resultadoFinal = PeliculasModel._agruparPeliculas(rows);
           resolve({ code: 200, message: "consulta completada con éxito", result: resultadoFinal })
@@ -68,7 +91,7 @@ class PeliculasModel {
   }
   static mostrar_peliculas_por_id(id) {
     return new Promise((resolve, reject) => {
-      pool.query('SELECT peliculas.id_pelicula, peliculas.titulo, peliculas.anio, peliculas.duracion, clasificacion_peliculas.id_clasificacion, clasificacion_peliculas.nombre AS clasificacion, categorias.id_categoria, categorias.nombre AS nombre_categoria FROM `peliculas` LEFT JOIN `clasificacion_peliculas` ON peliculas.id_clasificacion = clasificacion_peliculas.id_clasificacion LEFT JOIN `peliculas_categorias` ON peliculas.id_pelicula = peliculas_categorias.id_pelicula LEFT JOIN `categorias` ON categorias.id_categoria = peliculas_categorias.id_categoria WHERE peliculas.id_pelicula = ?', id)
+      pool.query('SELECT peliculas.id_pelicula, peliculas.titulo, peliculas.anio, peliculas.duracion, clasificacion_peliculas.id_clasificacion, clasificacion_peliculas.nombre AS clasificacion, categorias.id_categoria, categorias.nombre AS nombre_categoria, directores.id_director, directores.nombre AS nombre_director, directores.apellido AS apellido_director FROM `peliculas` LEFT JOIN `clasificacion_peliculas` ON peliculas.id_clasificacion = clasificacion_peliculas.id_clasificacion LEFT JOIN `peliculas_categorias` ON peliculas.id_pelicula = peliculas_categorias.id_pelicula LEFT JOIN `categorias` ON categorias.id_categoria = peliculas_categorias.id_categoria LEFT JOIN `peliculas_directores` ON peliculas.id_pelicula = peliculas_directores.id_pelicula LEFT JOIN `directores` ON directores.id_director = peliculas_directores.id_director WHERE peliculas.id_pelicula = ?', id)
         .then(([rows]) => {
           if (rows.length > 0) {
             const resultadoFinal = PeliculasModel._agruparPeliculas(rows);
@@ -81,7 +104,7 @@ class PeliculasModel {
         );
     });
   }
-  static ingresar_pelicula(peli, categorias) {
+  static ingresar_pelicula(peli, categorias, directores) {
     return new Promise(async (resolve, reject) => {
       let connection;
       try {
@@ -96,6 +119,7 @@ class PeliculasModel {
         }
 
         categorias = PeliculasModel._categoriasEntradaList(categorias);
+        directores = PeliculasModel._categoriasEntradaList(directores);
 
         // Insertar la película
         const [peliResult] = await connection.query('INSERT INTO `peliculas` SET ?', peli);
@@ -107,6 +131,15 @@ class PeliculasModel {
           await connection.query(
             'INSERT INTO `peliculas_categorias` (id_pelicula, id_categoria) VALUES ?',
             [valoresCategorias]
+          );
+        }
+
+        // Insertar directores (si existen)
+        if (directores && directores.length > 0) {
+          const valoresDirectores = directores.map(id_dire => [nuevaPeliId, id_dire]);
+          await connection.query(
+            'INSERT INTO `peliculas_directores` (id_pelicula, id_director) VALUES ?',
+            [valoresDirectores]
           );
         }
 
@@ -134,7 +167,7 @@ class PeliculasModel {
       }
     });
   }
-  static editar_pelicula(id, actualizar, categorias) {
+  static editar_pelicula(id, actualizar, categorias, directores) {
     return new Promise(async (resolve, reject) => {
       let connection;
       try {
@@ -148,6 +181,7 @@ class PeliculasModel {
         }
 
         categorias = PeliculasModel._categoriasEntradaList(categorias);
+        directores = PeliculasModel._categoriasEntradaList(directores);
 
         // Actualizar la tabla de peliculas
         const [updateResult] = await connection.query(
@@ -169,6 +203,18 @@ class PeliculasModel {
           await connection.query(
             'INSERT INTO peliculas_categorias (id_pelicula, id_categoria) VALUES ?',
             [categorias_insert]
+          );
+        }
+
+        // Quitar los directores viejos
+        await connection.query('DELETE FROM peliculas_directores WHERE id_pelicula = ?', [id]);
+
+        // Insertar los nuevos directores (si existen)
+        if (directores && directores.length > 0) {
+          const directores_insert = directores.map(id_dire => [id, id_dire]);
+          await connection.query(
+            'INSERT INTO peliculas_directores (id_pelicula, id_director) VALUES ?',
+            [directores_insert]
           );
         }
 

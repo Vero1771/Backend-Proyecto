@@ -3,7 +3,7 @@ const pool = require('../db/connection_db');
 class ProductosModel {
   static _validarDatos(producto) {
     const errors = [];
-    const camposObligatorios = ['nombre', 'cantidad', 'precio_unitario'];
+    const camposObligatorios = ['nombre', 'cantidad', 'precio_unitario', 'id_proveedor'];
     for (const campo of camposObligatorios) {
       if (producto[campo] === undefined || producto[campo] === null) errors.push(`El campo ${campo} es obligatorio`);
     }
@@ -15,12 +15,16 @@ class ProductosModel {
     if (isNaN(producto.precio_unitario) || producto.precio_unitario < 0 || isNaN(producto.cantidad) || producto.cantidad < 0) {
       errors.push("El precio y la cantidad deben ser números válidos");
     }
+    
+    if (isNaN(producto.id_proveedor) || producto.id_proveedor <= 0) {
+      errors.push("El id del proveedor debe ser un número válido");
+    }
 
     return errors;
   }
   static mostrar_productos() {
     return new Promise((resolve, reject) => {
-      pool.query('SELECT * FROM `productos`')
+      pool.query('SELECT productos.id_producto, productos.nombre, productos.cantidad, productos.precio_unitario, productos.en_stock, proveedores.id_proveedor, proveedores.nombre AS "nombre_proveedor", proveedores.correo, proveedores.telefono, proveedores.empresa FROM `productos` JOIN `proveedores` ON proveedores.id_proveedor = productos.id_proveedor')
         .then(([rows]) => {
           resolve({ code: 200, message: "consulta completada con éxito", result: rows })
         })
@@ -31,7 +35,7 @@ class ProductosModel {
   }
   static mostrar_productos_en_stock() {
     return new Promise((resolve, reject) => {
-      pool.query('SELECT * FROM `productos` WHERE productos.en_stock = 1;')
+      pool.query('SELECT productos.id_producto, productos.nombre, productos.cantidad, productos.precio_unitario, productos.en_stock, proveedores.id_proveedor, proveedores.nombre AS "nombre_proveedor", proveedores.correo, proveedores.telefono, proveedores.empresa FROM `productos` JOIN `proveedores` ON proveedores.id_proveedor = productos.id_proveedor WHERE productos.en_stock = 1;')
         .then(([rows]) => {
           resolve({ code: 200, message: "consulta completada con éxito", result: rows })
         })
@@ -42,7 +46,7 @@ class ProductosModel {
   }
   static mostrar_productos_por_id(id) {
     return new Promise((resolve, reject) => {
-      pool.query('SELECT * FROM `productos` WHERE id_producto = ?', id)
+      pool.query('SELECT productos.id_producto, productos.nombre, productos.cantidad, productos.precio_unitario, productos.en_stock, proveedores.id_proveedor, proveedores.nombre AS "nombre_proveedor", proveedores.correo, proveedores.telefono, proveedores.empresa FROM `productos` JOIN `proveedores` ON proveedores.id_proveedor = productos.id_proveedor WHERE id_producto = ?', id)
         .then(([rows]) => {
           if (rows.length > 0) {
             resolve({ code: 200, message: "consulta completada con éxito", result: rows })

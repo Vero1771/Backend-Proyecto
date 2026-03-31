@@ -3,7 +3,7 @@ const pool = require('../db/connection_db');
 class SalasModel {
   static _validarDatos(sala) {
     const errors = [];
-    const camposObligatorios = ['nombre', 'capacidad'];
+    const camposObligatorios = ['nombre', 'capacidad', 'id_sucursal'];
     for (const campo of camposObligatorios) {
       if (sala[campo] === undefined || sala[campo] === null) errors.push(`El campo ${campo} es obligatorio`);
     }
@@ -16,11 +16,15 @@ class SalasModel {
       errors.push("La capacidad de la sala debe ser un número válido");
     }
 
+    if (isNaN(sala.id_sucursal) || sala.id_sucursal <= 0) {
+      errors.push("El id de la sucursal debe ser un número válido");
+    }
+
     return errors;
   }
   static mostrar_salas() {
     return new Promise((resolve, reject) => {
-      pool.query('SELECT * FROM `salas`')
+      pool.query('SELECT salas.id_sala, salas.nombre, salas.capacidad, sucursales.id_sucursal, sucursales.nombre AS "nombre_sucursal", sucursales.estado, sucursales.ciudad, sucursales.direccion FROM `salas` JOIN `sucursales` ON sucursales.id_sucursal = salas.id_sucursal')
         .then(([rows]) => {
           resolve({ code: 200, message: "consulta completada con éxito", result: rows })
         })
@@ -31,7 +35,7 @@ class SalasModel {
   }
   static mostrar_salas_por_id(id) {
     return new Promise((resolve, reject) => {
-      pool.query('SELECT * FROM `salas` WHERE id_sala = ?', id)
+      pool.query('SELECT salas.id_sala, salas.nombre, salas.capacidad, sucursales.id_sucursal, sucursales.nombre AS "nombre_sucursal", sucursales.estado, sucursales.ciudad, sucursales.direccion FROM `salas` JOIN `sucursales` ON sucursales.id_sucursal = salas.id_sucursal WHERE id_sala = ?', id)
         .then(([rows]) => {
           if (rows.length > 0) {
             resolve({ code: 200, message: "consulta completada con éxito", result: rows })
