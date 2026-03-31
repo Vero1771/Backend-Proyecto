@@ -177,6 +177,27 @@ npm run dev
   - `/editar/:id` — (PUT) Editar usuarios. (admin)
   - `/eliminar/:id` — (DELETE) Eliminar usuarios por su ID. (admin)
 
+- `/sucursales` 
+  - `/mostrar` — (GET) Mostrar todas las sucursales. (Sin rol)
+  - `/buscar/:id` — (GET) Mostrar sucursales por su ID. (Sin rol)
+  - `/ingresar` — (POST) Ingresar sucursales. (admin)
+  - `/editar/:id` — (PUT) Editar sucursales. (admin)
+  - `/eliminar/:id` — (DELETE) Eliminar sucursales por su ID. (admin)
+
+- `/proveedores` 
+  - `/mostrar` — (GET) Mostrar todos los proveedores. (admin)
+  - `/buscar/:id` — (GET) Mostrar proveedores por su ID. (admin)
+  - `/ingresar` — (POST) Ingresar proveedores. (admin)
+  - `/editar/:id` — (PUT) Editar proveedores. (admin)
+  - `/eliminar/:id` — (DELETE) Eliminar proveedores por su ID. (admin)
+
+- `/directores` 
+  - `/mostrar` — (GET) Mostrar todos los directores. (Sin rol)
+  - `/buscar/:id` — (GET) Mostrar directores por su ID. (Sin rol)
+  - `/ingresar` — (POST) Ingresar directores. (admin)
+  - `/editar/:id` — (PUT) Editar directores. (admin)
+  - `/eliminar/:id` — (DELETE) Eliminar directores por su ID. (admin)
+
 8. Acceder en el navegador a `http://localhost:3000/` para interactuar con la interfaz EJS.
 
 ### Credenciales de los Usuarios de Prueba Registrados
@@ -244,11 +265,12 @@ Para probar las consultas de ingresar y editar de cada entidad:
 
   ```
     {
-      "titulo": "Star Wars: Episodio IV",
-      "anio": 1977,
-      "duracion": 125,
-      "id_clasificacion": 1,
-      "categorias": [1,2]
+      "titulo": "E.T. el extraterrestre",
+      "anio": 1982,
+      "duracion": 116,
+      "id_clasificacion": 4,
+      "categorias": [2,3,5],
+      "directores": [6]
     }
   ```
 
@@ -269,7 +291,8 @@ Para probar las consultas de ingresar y editar de cada entidad:
   ```
     {
       "nombre": "Sala Platino",
-      "capacidad": 200
+      "capacidad": 200,
+      "id_sucursal": 1
     }
   ```
 
@@ -300,7 +323,8 @@ Para probar las consultas de ingresar y editar de cada entidad:
     {
       "nombre": "chicle",
       "cantidad": 150,
-      "precio_unitario": 2.50
+      "precio_unitario": 2.50,
+      "id_proveedor": 1
     }
   ```
 
@@ -390,6 +414,42 @@ Para probar las consultas de ingresar y editar de cada entidad:
     {
       "email": "test@gmail.com",
       "password": "test"
+    }
+  ```
+
+#### Entradas JSON Entidades Nuevas
+
+- Sucursales
+  - Ingresar/editar:
+
+  ```
+    {
+      "nombre": "CineX",
+      "estado": "Trujillo",
+      "ciudad": "Valera",
+      "direccion": "Av. Bolívar"
+    }
+  ```
+
+- Proveedores
+  - Ingresar/editar:
+
+  ```
+    {
+      "nombre": "Maikel Alponte",
+      "correo": "todopordetal@gmail.com",
+      "telefono": "1234567891",
+      "empresa": "Todo por Detal S.A."
+    }
+  ```
+
+- Directores
+  - Ingresar/editar:
+
+  ```
+    {
+      "nombre": "Pete",
+      "apellido": "Docter"
     }
   ```
 
