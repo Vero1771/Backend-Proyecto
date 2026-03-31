@@ -41,7 +41,7 @@ router.delete('/eliminar/:id', checkLoginAdmin, function (req, res, next) {
 /* VIEWS EJS */
 
 /* (GET) Todos los proveedores */
-router.get('/', function (req, res, next) {
+router.get('/', checkLoginAdmin, function (req, res, next) {
   Proveedores_Controller.mostrar_proveedores()
     .then((r) => {
       res.render('./proveedores_views/proveedores', { title: 'Proveedores', proveedores_list: r.result });
