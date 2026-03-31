@@ -52,6 +52,22 @@
             <% } %>
         </div>
 
+        <div>
+          <label id="directores">Directores</label><br>
+            <% if(directores_list.length > 0) { %>
+              <% directores_list.forEach((d, i) => { %>
+
+                <label>
+                  <%= d.nombre %> <%= d.apellido %>
+                  <input type="checkbox" value="<%= d.id_director %>" name="directores">
+                </label><br>
+
+              <% }); %>
+            <% } else { %>
+              <p>No hay Directores para asignar</p>
+            <% } %>
+        </div>
+
         <button class="formEntidad__submit" type="button" onclick="enviarFormulario()">Enviar</button>
 
       </form>
@@ -68,12 +84,16 @@
           const checkboxesCategorias = document.querySelectorAll('input[name="categorias"]:checked');
           const categorias = Array.from(checkboxesCategorias).map(cb => parseInt(cb.value));
 
+          const checkboxesDirectores = document.querySelectorAll('input[name="directores"]:checked');
+          const directores = Array.from(checkboxesDirectores).map(cb => parseInt(cb.value));
+
           const data = {
             titulo,
             anio,
             duracion,
             id_clasificacion,
-            categorias
+            categorias,
+            directores
           };
 
           try {

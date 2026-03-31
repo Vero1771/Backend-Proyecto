@@ -14,6 +14,24 @@
           <input type="number" name="capacidad" id="capacidad_input">
         </label><br>
 
+        <div>
+          <label for="id_sucursal">Elige una Sucursal</label><br>
+          <% if(sucursales_list.length > 0) { %>
+            <select name="id_sucursal" id="id_sucursal" required>
+              <option value="" disabled selected>Selecciona una sucursal...</option>
+              <% sucursales_list.forEach((s) => { %>
+                <option value="<%= s.id_sucursal %>">
+                  <%= s.nombre %>
+                </option>
+              <% }); %>
+            </select>
+          <% } else { %>
+            <p>No hay sucursales para asignar</p>
+          <% } %>
+        </div>
+
+        <br>
+
         <button class="formEntidad__submit" type="button" onclick="enviarFormulario()">Enviar</button>
       </form>
 
@@ -21,7 +39,8 @@
         async function enviarFormulario() {
           const data = {
             nombre: document.getElementById('nombre_input').value,
-            capacidad: parseInt(document.getElementById('capacidad_input').value)
+            capacidad: parseInt(document.getElementById('capacidad_input').value),
+            id_sucursal: document.getElementById('id_sucursal').value
           };
 
           try {

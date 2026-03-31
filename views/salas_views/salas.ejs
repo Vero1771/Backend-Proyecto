@@ -16,6 +16,10 @@
                   <th>ID</th>
                   <th>Nombre</th>
                   <th>Capacidad</th>
+                  <th>Sucursal</th>
+                  <th>Estado</th>
+                  <th>Ciudad</th>
+                  <th>Dirección</th>
                   <% if (user && user.rol === 'admin') { %>
                     <th>Administrar</th>
                   <% } %>
@@ -27,6 +31,10 @@
                     <td><%= s.id_sala %></td>
                     <td><%= s.nombre %></td>
                     <td><%= s.capacidad %></td>
+                    <td><%= s.nombre_sucursal %></td>
+                    <td><%= s.estado %></td>
+                    <td><%= s.ciudad %></td>
+                    <td><%= s.direccion %></td>
                     
                     <% if (user && user.rol === 'admin') { %>
                       <td>    

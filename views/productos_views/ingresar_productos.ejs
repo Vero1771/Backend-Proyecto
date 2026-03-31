@@ -29,6 +29,24 @@
             </div>
           </label><br>
 
+          <div>
+            <label for="id_proveedor">Elige un Proveedor</label><br>
+            <% if(proveedores_list.length > 0) { %>
+              <select name="id_proveedor" id="id_proveedor" required>
+                <option value="" disabled selected>Selecciona un proveedor...</option>
+                <% proveedores_list.forEach((p) => { %>
+                  <option value="<%= p.id_proveedor %>">
+                    <%= p.nombre %>
+                  </option>
+                <% }); %>
+              </select>
+            <% } else { %>
+              <p>No hay proveedores para asignar</p>
+            <% } %>
+          </div>
+
+          <br>
+
           <button class="formEntidad__submit" type="button" onclick="enviarFormulario()">Enviar</button>
 
         </form>
@@ -42,11 +60,14 @@
             const radioClasificacion = document.querySelector('input[name="en_stock"]:checked');
             const en_stock = radioClasificacion ? parseInt(radioClasificacion.value) : null;
 
+            const id_proveedor = document.getElementById('id_proveedor').value
+
             const data = {
               nombre,
               cantidad,
               precio_unitario,
-              en_stock
+              en_stock,
+              id_proveedor
             };
 
             try {

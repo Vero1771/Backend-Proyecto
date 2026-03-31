@@ -18,6 +18,7 @@
                   <th>Duración</th>
                   <th>Categorías</th>
                   <th>Clasificación</th>
+                  <th>Director(es)</th>
                   <% if (user && user.rol === 'admin') { %>
                     <th>Administrar</th>
                   <% } %>
@@ -40,6 +41,16 @@
                         <% }); %>
                       </td>
                       <td><%= peli.clasificacion %></td>
+
+                      <td>
+                        <% peli.directores.forEach((dire, j) => { %>
+
+                          <%if(j != 0){ %> , <% }%>
+
+                          <%=dire.nombre %> <%=dire.apellido %>
+                          
+                        <% }); %>
+                      </td>
 
                       <% if (user && user.rol === 'admin') { %>
                         <td>    

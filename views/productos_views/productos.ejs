@@ -17,6 +17,10 @@
                   <th>Cantidad</th>
                   <th>Precio Unitario</th>
                   <th>En Stock</th>
+                  <th>Proveedor</th>
+                  <th>Correo</th>
+                  <th>Teléfono</th>
+                  <th>Empresa</th>
                   <% if (user && user.rol === 'admin') { %>
                     <th>Administrar</th>
                   <% } %>
@@ -30,6 +34,10 @@
                       <td><%= p.cantidad %></td>
                       <td><%= p.precio_unitario %></td>
                       <td><%= p.en_stock %></td>
+                      <td><%= p.nombre_proveedor %></td>
+                      <td><%= p.correo %></td>
+                      <td><%= p.telefono %></td>
+                      <td><%= p.empresa %></td>
 
                       <% if (user && user.rol === 'admin') { %>
                         <td>    
