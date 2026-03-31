@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 24-03-2026 a las 19:38:13
+-- Tiempo de generación: 30-03-2026 a las 22:36:28
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -123,6 +123,33 @@ INSERT INTO `clasificacion_peliculas` (`id_clasificacion`, `nombre`) VALUES
 (3, 'G'),
 (4, 'PG'),
 (5, 'NC-17');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `directores`
+--
+
+CREATE TABLE `directores` (
+  `id_director` int(11) NOT NULL,
+  `nombre` varchar(100) NOT NULL,
+  `apellido` varchar(100) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `directores`
+--
+
+INSERT INTO `directores` (`id_director`, `nombre`, `apellido`) VALUES
+(1, 'Anthony', 'Russo'),
+(2, 'Joe', 'Russo'),
+(3, 'Christopher', 'Nolan'),
+(4, 'Frank', 'Darabont'),
+(5, 'Tim', 'Miller'),
+(6, 'Steven', 'Spielberg'),
+(7, 'Lana', 'Wachowski'),
+(8, 'Lilly', 'Wachowski'),
+(9, 'Robert', 'Zemeckis');
 
 -- --------------------------------------------------------
 
@@ -310,6 +337,34 @@ INSERT INTO `peliculas_categorias` (`id_pelicula_categoria`, `id_pelicula`, `id_
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `peliculas_directores`
+--
+
+CREATE TABLE `peliculas_directores` (
+  `id_pelicula_director` int(11) NOT NULL,
+  `id_pelicula` int(11) NOT NULL,
+  `id_director` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `peliculas_directores`
+--
+
+INSERT INTO `peliculas_directores` (`id_pelicula_director`, `id_pelicula`, `id_director`) VALUES
+(1, 1, 1),
+(2, 1, 2),
+(3, 2, 3),
+(4, 3, 4),
+(5, 4, 5),
+(6, 5, 6),
+(7, 6, 3),
+(8, 7, 7),
+(9, 7, 8),
+(10, 8, 9);
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `productos`
 --
 
@@ -318,19 +373,45 @@ CREATE TABLE `productos` (
   `nombre` varchar(100) NOT NULL,
   `cantidad` int(11) NOT NULL,
   `precio_unitario` decimal(10,2) NOT NULL,
-  `en_stock` tinyint(1) NOT NULL DEFAULT 0
+  `en_stock` tinyint(1) NOT NULL DEFAULT 0,
+  `id_proveedor` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `productos`
 --
 
-INSERT INTO `productos` (`id_producto`, `nombre`, `cantidad`, `precio_unitario`, `en_stock`) VALUES
-(1, 'cotufas', 50, 10.00, 1),
-(2, 'samba', 50, 2.00, 1),
-(3, 'refresco', 50, 8.00, 1),
-(4, 'combo tequeños', 25, 5.00, 1),
-(5, 'cocosete', 50, 5.00, 1);
+INSERT INTO `productos` (`id_producto`, `nombre`, `cantidad`, `precio_unitario`, `en_stock`, `id_proveedor`) VALUES
+(1, 'cotufas', 50, 10.00, 1, 1),
+(2, 'samba', 50, 2.00, 1, 3),
+(3, 'refresco', 50, 8.00, 1, 2),
+(4, 'combo tequeños', 25, 5.00, 1, 4),
+(5, 'cocosete', 50, 5.00, 1, 5);
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `proveedores`
+--
+
+CREATE TABLE `proveedores` (
+  `id_proveedor` int(11) NOT NULL,
+  `nombre` varchar(100) NOT NULL,
+  `correo` varchar(100) NOT NULL,
+  `telefono` varchar(20) NOT NULL,
+  `empresa` varchar(100) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `proveedores`
+--
+
+INSERT INTO `proveedores` (`id_proveedor`, `nombre`, `correo`, `telefono`, `empresa`) VALUES
+(1, 'Carlos Méndez', 'ventas@maizoro.com', '5551234567', 'Maizoro Snacks S.A.'),
+(2, 'Ana Rodríguez', 'contacto@refrescosunidos.com', '3339876543', 'Bebidas Globales'),
+(3, 'Luis García', 'logistica@confitexmax.mx', '8114567890', 'Confitex Industrial'),
+(4, 'Sofía Martínez', 's.martinez@techcine.com', '9982233445', 'TechCine Products'),
+(5, 'Jorge Pérez', 'ventas@dulcesmex.com', '2226677889', 'Dulces Tradicionales S.A.');
 
 -- --------------------------------------------------------
 
@@ -341,22 +422,45 @@ INSERT INTO `productos` (`id_producto`, `nombre`, `cantidad`, `precio_unitario`,
 CREATE TABLE `salas` (
   `id_sala` int(11) NOT NULL,
   `nombre` varchar(100) NOT NULL,
-  `capacidad` int(11) NOT NULL
+  `capacidad` int(11) NOT NULL,
+  `id_sucursal` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `salas`
 --
 
-INSERT INTO `salas` (`id_sala`, `nombre`, `capacidad`) VALUES
-(1, 'Sala IMAX', 200),
-(2, 'Sala VIP', 100),
-(3, 'Sala 3D', 150),
-(4, 'Sala Estándar', 120),
-(5, 'Sala 2 ', 10),
-(6, 'Sala 3 ', 50),
-(7, 'Sala 4', 122),
-(8, 'Sala 5', 121);
+INSERT INTO `salas` (`id_sala`, `nombre`, `capacidad`, `id_sucursal`) VALUES
+(1, 'Sala IMAX', 200, 1),
+(2, 'Sala VIP', 100, 1),
+(3, 'Sala 3D', 150, 1),
+(4, 'Sala Estándar', 120, 1),
+(5, 'Sala 2 ', 10, 2),
+(6, 'Sala 3 ', 50, 2),
+(7, 'Sala 4', 122, 2),
+(8, 'Sala 5', 121, 2);
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `sucursales`
+--
+
+CREATE TABLE `sucursales` (
+  `id_sucursal` int(11) NOT NULL,
+  `nombre` varchar(100) NOT NULL,
+  `estado` varchar(100) NOT NULL,
+  `ciudad` varchar(100) NOT NULL,
+  `direccion` varchar(100) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `sucursales`
+--
+
+INSERT INTO `sucursales` (`id_sucursal`, `nombre`, `estado`, `ciudad`, `direccion`) VALUES
+(1, 'CineCentral Norte', 'CDMX', 'Ciudad de México', 'Av. Reforma 222, Col. Juárez'),
+(2, 'CineStar Galerías', 'Jalisco', 'Guadalajara', 'Av. Vallarta 3959, Don Bosco Vallarta');
 
 -- --------------------------------------------------------
 
@@ -470,6 +574,12 @@ ALTER TABLE `clasificacion_peliculas`
   ADD PRIMARY KEY (`id_clasificacion`);
 
 --
+-- Indices de la tabla `directores`
+--
+ALTER TABLE `directores`
+  ADD PRIMARY KEY (`id_director`);
+
+--
 -- Indices de la tabla `entradas`
 --
 ALTER TABLE `entradas`
@@ -508,16 +618,38 @@ ALTER TABLE `peliculas_categorias`
   ADD KEY `id_categoria` (`id_categoria`);
 
 --
+-- Indices de la tabla `peliculas_directores`
+--
+ALTER TABLE `peliculas_directores`
+  ADD PRIMARY KEY (`id_pelicula_director`),
+  ADD KEY `id_pelicula` (`id_pelicula`),
+  ADD KEY `id_director` (`id_director`);
+
+--
 -- Indices de la tabla `productos`
 --
 ALTER TABLE `productos`
-  ADD PRIMARY KEY (`id_producto`);
+  ADD PRIMARY KEY (`id_producto`),
+  ADD KEY `id_proveedor` (`id_proveedor`);
+
+--
+-- Indices de la tabla `proveedores`
+--
+ALTER TABLE `proveedores`
+  ADD PRIMARY KEY (`id_proveedor`);
 
 --
 -- Indices de la tabla `salas`
 --
 ALTER TABLE `salas`
-  ADD PRIMARY KEY (`id_sala`);
+  ADD PRIMARY KEY (`id_sala`),
+  ADD KEY `id_sucursal` (`id_sucursal`);
+
+--
+-- Indices de la tabla `sucursales`
+--
+ALTER TABLE `sucursales`
+  ADD PRIMARY KEY (`id_sucursal`);
 
 --
 -- Indices de la tabla `usuarios`
@@ -565,6 +697,12 @@ ALTER TABLE `clasificacion_peliculas`
   MODIFY `id_clasificacion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
+-- AUTO_INCREMENT de la tabla `directores`
+--
+ALTER TABLE `directores`
+  MODIFY `id_director` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+
+--
 -- AUTO_INCREMENT de la tabla `entradas`
 --
 ALTER TABLE `entradas`
@@ -595,16 +733,34 @@ ALTER TABLE `peliculas_categorias`
   MODIFY `id_pelicula_categoria` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
+-- AUTO_INCREMENT de la tabla `peliculas_directores`
+--
+ALTER TABLE `peliculas_directores`
+  MODIFY `id_pelicula_director` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+
+--
 -- AUTO_INCREMENT de la tabla `productos`
 --
 ALTER TABLE `productos`
   MODIFY `id_producto` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
+-- AUTO_INCREMENT de la tabla `proveedores`
+--
+ALTER TABLE `proveedores`
+  MODIFY `id_proveedor` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
 -- AUTO_INCREMENT de la tabla `salas`
 --
 ALTER TABLE `salas`
   MODIFY `id_sala` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+
+--
+-- AUTO_INCREMENT de la tabla `sucursales`
+--
+ALTER TABLE `sucursales`
+  MODIFY `id_sucursal` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT de la tabla `usuarios`
@@ -655,6 +811,25 @@ ALTER TABLE `peliculas`
 ALTER TABLE `peliculas_categorias`
   ADD CONSTRAINT `peliculas_categorias_ibfk_1` FOREIGN KEY (`id_pelicula`) REFERENCES `peliculas` (`id_pelicula`) ON DELETE CASCADE,
   ADD CONSTRAINT `peliculas_categorias_ibfk_2` FOREIGN KEY (`id_categoria`) REFERENCES `categorias` (`id_categoria`) ON DELETE CASCADE;
+
+--
+-- Filtros para la tabla `peliculas_directores`
+--
+ALTER TABLE `peliculas_directores`
+  ADD CONSTRAINT `peliculas_directores_ibfk_1` FOREIGN KEY (`id_pelicula`) REFERENCES `peliculas` (`id_pelicula`) ON DELETE CASCADE,
+  ADD CONSTRAINT `peliculas_directores_ibfk_2` FOREIGN KEY (`id_director`) REFERENCES `directores` (`id_director`) ON DELETE CASCADE;
+
+--
+-- Filtros para la tabla `productos`
+--
+ALTER TABLE `productos`
+  ADD CONSTRAINT `productos_ibfk_1` FOREIGN KEY (`id_proveedor`) REFERENCES `proveedores` (`id_proveedor`);
+
+--
+-- Filtros para la tabla `salas`
+--
+ALTER TABLE `salas`
+  ADD CONSTRAINT `salas_ibfk_1` FOREIGN KEY (`id_sucursal`) REFERENCES `sucursales` (`id_sucursal`);
 
 --
 -- Filtros para la tabla `ventas`

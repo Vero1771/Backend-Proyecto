@@ -18,6 +18,9 @@ var asientosRouter = require('./routes/asientos_routes');
 var categoriasRouter = require('./routes/categorias_routes');
 var clasificacionesRouter = require('./routes/clasificaciones_routes');
 var metodosPagoRouter = require('./routes/metodos_pagos_routes');
+var proveedoresRouter = require('./routes/proveedores_routes');
+var sucursalesRouter = require('./routes/sucursales_routes');
+var directoresRouter = require('./routes/directores_routes');
 
 var app = express();
 
@@ -64,6 +67,9 @@ app.use('/asientos', asientosRouter);
 app.use('/categorias', categoriasRouter);
 app.use('/clasificaciones', clasificacionesRouter);
 app.use('/metodos', metodosPagoRouter);
+app.use('/proveedores', proveedoresRouter);
+app.use('/sucursales', sucursalesRouter);
+app.use('/directores', directoresRouter);
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {
