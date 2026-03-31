@@ -62,6 +62,8 @@
               }
             });
 
+            const data = await response.json();
+
             if (response.ok) {
               const fila = boton.closest('tr'); //eliminar la fila de la tabla sin recargar
               fila.remove();
@@ -71,7 +73,7 @@
                 location.reload(); 
               }
             } else {
-              alert('Error al eliminar la sala \n Posiblemente tenga relación con otra entidad');
+              alert(data.message || 'Error al eliminar la sala');
             }
           } catch (error) {
             console.error('Error:', error);

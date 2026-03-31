@@ -44,6 +44,8 @@
                 'Content-Type': 'application/json'
               }
             });
+            
+            const data = await response.json();
 
             if (response.ok) {
               const fila = boton.closest('tr'); //eliminar la fila de la tabla sin recargar
@@ -54,7 +56,7 @@
                 location.reload(); 
               }
             } else {
-              alert('Error al eliminar el asiento \n Posiblemente tenga relación con otra entidad');
+              alert(data.message || 'Error al eliminar el asiento');
             }
           } catch (error) {
             console.error('Error:', error);
