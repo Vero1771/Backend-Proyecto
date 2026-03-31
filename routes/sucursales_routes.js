@@ -55,4 +55,36 @@ router.get('/', function (req, res, next) {
     });
 });
 
+/* (POST) */
+router.get('/ingresar', checkLoginAdmin, function (req, res, next) {
+  res.render('./sucursales_views/ingresar_sucursales', { title: 'Sucursales' });
+});
+
+/* (PUT) Mostrar formulario de edición */
+router.get('/actualizar/:id', checkLoginAdmin, function (req, res, next) {
+  Sucursales_Controller.mostrar_sucursales_por_id(req.params.id)
+    .then((r) => {
+
+      if (r.code === 404) {
+        return res.status(404).render('error', {
+          title: 'Sucursal no encontrada',
+          code: 404,
+          message: r.message
+        });
+      }
+
+      res.render('./sucursales_views/editar_sucursales', {
+        title: 'Editar Sucursal',
+        sucursal: r.result[0]
+      });
+    })
+    .catch(err => {
+      res.status(500).render('error', {
+        title: 'Error del Servidor',
+        code: 500,
+        message: 'No pudimos conectar con la base de datos'
+      });
+    });
+});
+
 module.exports = router;

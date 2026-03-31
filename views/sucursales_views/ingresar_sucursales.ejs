@@ -1,0 +1,64 @@
+<%-include("../components/head.ejs")%>
+
+  <body>
+    <%-include("../components/nav.ejs")%>
+    <main>
+      <h1>Ingresar <%= title %></h1>
+
+      <form class="formEntidad" id="formIngresarSucursal">
+        <label>Nombre
+          <input type="text" name="nombre" id="nombre_input">
+        </label><br>
+
+         <label>Estado
+          <input type="text" name="estado" id="estado_input">
+        </label><br>
+
+        <label>Ciudad
+          <input type="text" name="ciudad" id="ciudad_input">
+        </label><br>
+
+        <label>Dirección
+          <input type="text" name="direccion" id="direccion_input">
+        </label><br>
+
+        <button class="formEntidad__submit" type="button" onclick="enviarFormulario()">Enviar</button>
+      </form>
+
+      <script>
+        async function enviarFormulario() {
+          const data = {
+            nombre: document.getElementById('nombre_input').value,
+            estado: document.getElementById('estado_input').value,
+            ciudad: document.getElementById('ciudad_input').value,
+            direccion: document.getElementById('direccion_input').value
+          };
+
+          try {
+            const response = await fetch('/sucursales/ingresar', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(data)
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+              alert("Sucursal ingresada con éxito");
+              window.location.href = '/sucursales'; // Redirigir a la lista  
+            } else {
+              // Si el servidor responde con 400 mostrar los mensajes de error
+              const mensajesError = result.result.join("\n"); 
+              alert("Error en la validación:\n" + mensajesError);
+            }
+          } catch (error) {
+            console.error("Error en la petición:", error); 
+            alert("Ocurrió un error inesperado en el servidor.");
+          }
+        }
+      </script>
+      
+    </main>
+  </body>
+
+  <%-include("../components/footer.ejs")%>

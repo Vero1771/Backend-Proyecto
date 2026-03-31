@@ -1,0 +1,63 @@
+<%-include("../components/head.ejs")%>
+
+  <body>
+    <%-include("../components/nav.ejs")%>
+      <main>
+        <h1><%= title %>: <%= sucursal.nombre %></h1> 
+
+        <form class="formEntidad" id="formEditarSucursal">
+          <label>Nombre
+            <input type="text" id="nombre_input" name="nombre" value="<%= sucursal.nombre %>"> 
+          </label><br>
+
+          <label>Estado
+            <input type="text" id="estado_input" name="estado" value="<%= sucursal.estado %>"> 
+          </label><br>
+
+          <label>Ciudad
+            <input type="text" id="ciudad_input" name="ciudad" value="<%= sucursal.ciudad %>"> 
+          </label><br>
+
+          <label>Dirección
+            <input type="text" id="direccion_input" name="direccion" value="<%= sucursal.direccion %>"> 
+          </label><br>
+
+          <button class="formEntidad__submit" type="button" onclick="actualizarSucursal('<%= sucursal.id_sucursal %>')">Guardar Cambios</button>
+        </form>
+
+        <script>
+          async function actualizarSucursal(id) {
+            const data = {
+              nombre: document.getElementById('nombre_input').value,
+              estado: document.getElementById('estado_input').value,
+              ciudad: document.getElementById('ciudad_input').value,
+              direccion: document.getElementById('direccion_input').value
+            };
+
+            try {
+              const response = await fetch(`/sucursales/editar/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+              });
+
+              const result = await response.json();
+
+              if (response.ok) {
+                alert("Sucursal actualizada con éxito");
+                window.location.href = '/sucursales'; // Redirigir a la lista
+              } else {
+                // Si el servidor responde con 400 mostrar los mensajes de error
+                const mensajesError = result.result.join("\n"); 
+                alert("Error en la validación:\n" + mensajesError);
+              }
+            } catch (error) {
+              console.error("Error:", error);
+              alert("Ocurrió un problema al conectar con el servidor.");
+            }
+          }
+        </script>
+      </main>
+  </body>
+
+  <%-include("../components/footer.ejs")%>

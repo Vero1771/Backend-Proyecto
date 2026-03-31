@@ -1,0 +1,83 @@
+<%-include("../components/head.ejs")%>
+  <body>
+
+    <%-include("../components/nav.ejs")%>
+
+    <main>
+      <h1><%= title %></h1>
+
+      <% if(sucursales_list.length <= 0) { %>
+        <h2>No hay sucursales registradas</h1>
+      <% }  %>
+
+      <table>
+          <thead>
+              <tr>
+                  <th>ID</th>
+                  <th>Nombre</th>
+                  <th>Estado</th>
+                  <th>Ciudad</th>
+                  <th>Dirección</th>
+                  <% if (user && user.rol === 'admin') { %>
+                    <th>Administrar</th>
+                  <% } %>
+              </tr>
+          </thead>
+          <tbody>
+              <% sucursales_list.forEach((s, i) => { %>
+                  <tr>
+                    <td><%= s.id_sucursal %></td>
+                    <td><%= s.nombre %></td>
+                    <td><%= s.estado %></td>
+                    <td><%= s.ciudad %></td>
+                    <td><%= s.direccion %></td>
+                    
+                    <% if (user && user.rol === 'admin') { %>
+                      <td>    
+                        <div class="botonera">
+                          <a class="botonera__opcion opcion__editar" href="/sucursales/actualizar/<%= s.id_sucursal %>" class="button">Editar</a>
+                          <button class="botonera__opcion opcion__eliminar" onclick="eliminarSucursal(this, '<%= s.id_sucursal %>')"> X </button> 
+                        </div>
+                      </td>
+                    <% } %>
+
+                  </tr>
+              <% }); %>
+          </tbody>
+      </table>
+
+      <script>
+        async function eliminarSucursal(boton, id) {
+          if (!confirm('¿Estás seguro de eliminar esta sucursal?')) return;
+
+          try {
+            const response = await fetch(`/sucursales/eliminar/${id}`, {
+              method: 'DELETE', 
+              headers: {
+                'Content-Type': 'application/json'
+              }
+            });
+
+            if (response.ok) {
+              const fila = boton.closest('tr'); //eliminar la fila de la tabla sin recargar
+              fila.remove();
+                  
+              const tbody = document.querySelector('tbody');
+              if (tbody.children.length === 0) {
+                location.reload(); 
+              }
+            } else {
+              alert('Error al eliminar la sucursal \n Posiblemente tenga relación con otra entidad');
+            }
+          } catch (error) {
+            console.error('Error:', error);
+            alert('Hubo un problema con la conexión');
+          }
+        }
+      </script>
+
+    </main>
+
+  </body>
+
+<%-include("../components/footer.ejs")%>

@@ -95,6 +95,33 @@
       </li>
     <% } %>
 
+    <li class="dropdown">
+      <a href="/sucursales/">Sucursales</a>
+      <% if (user && user.rol === 'admin') { %>
+        <ul class="dropdown-content">
+          <li><a href="/sucursales/ingresar">Ingresar Sucursal</a></li>
+        </ul>
+      <% } %>
+    </li>
+
+    <li class="dropdown">
+      <a href="/directores/">Directores</a>
+      <% if (user && user.rol === 'admin') { %>
+        <ul class="dropdown-content">
+          <li><a href="/directores/ingresar">Ingresar Director</a></li>
+        </ul>
+      <% } %>
+    </li>
+
+    <% if (user && user.rol === 'admin') { %>
+      <li class="dropdown">
+        <a href="/proveedores">Proveedores</a>
+        <ul class="dropdown-content">
+          <li><a href="/proveedores/ingresar">Ingresar Proveedores</a></li>
+        </ul>
+      </li>
+    <% } %>
+
     <% if (user) { %>
       <li class="dropdown">
         <a href="/usuarios/logout">Salir</a>
