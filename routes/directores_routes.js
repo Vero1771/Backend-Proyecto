@@ -40,4 +40,51 @@ router.delete('/eliminar/:id', checkLoginAdmin, function (req, res, next) {
 
 /* VIEWS EJS */
 
+/* (GET) Todos los directores */
+router.get('/', function (req, res, next) {
+  Directores_Controller.mostrar_directores()
+    .then((r) => {
+      res.render('./directores_views/directores', { title: 'Directores', directores_list: r.result });
+    })
+    .catch(err => {
+      res.status(500).render('error', {
+        title: 'Error del Servidor',
+        code: 500,
+        message: 'No pudimos conectar con la base de datos'
+      });
+    });
+});
+
+/* (POST) */
+router.get('/ingresar', checkLoginAdmin, function (req, res, next) {
+  res.render('./directores_views/ingresar_directores', { title: 'Directores' });
+});
+
+/* (PUT) Mostrar formulario de edición */
+router.get('/actualizar/:id', checkLoginAdmin, function (req, res, next) {
+  Directores_Controller.mostrar_directores_por_id(req.params.id)
+    .then((r) => {
+
+      if (r.code === 404) {
+        return res.status(404).render('error', {
+          title: 'Director no encontrado',
+          code: 404,
+          message: r.message
+        });
+      }
+
+      res.render('./directores_views/editar_directores', {
+        title: 'Editar Director',
+        director: r.result[0]
+      });
+    })
+    .catch(err => {
+      res.status(500).render('error', {
+        title: 'Error del Servidor',
+        code: 500,
+        message: 'No pudimos conectar con la base de datos'
+      });
+    });
+});
+
 module.exports = router;
