@@ -1,13 +1,17 @@
 <%-include("./components/head.ejs")%>
   <body>
     <%-include("./components/nav.ejs")%>
-    <main>
+    <main class="index__main">
       <h1><%= title %></h1>
-      <p>Welcome to <%= title %></p>
+      <p>Bienvenido a <%= title %></p>
 
       <% if (user) { %>
         <p>Sesión iniciada como: <%= user.email %></p>
       <% } %>
+
+      <div class="img__container">
+        <img src="/images/Sala_de_cine.jpg" alt="Sala de Cine">
+      </div>
 
     </main>
   </body>
