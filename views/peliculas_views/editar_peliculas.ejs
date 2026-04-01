@@ -18,7 +18,7 @@
           </label><br>
 
           <div>
-            <label id="id_clasificacion">Clasificación</label><br>
+            <label id="id_clasificacion">----- Clasificación -----</label><br>
               <% if(clasificaciones_list.length > 0) { %>
                 <% clasificaciones_list.forEach((cl, i) => { %>
 
@@ -35,7 +35,7 @@
           </div>
 
           <div>
-            <label id="categorias">Categorías</label><br>
+            <label id="categorias">----- Categorías -----</label><br>
               <% if(categorias_list.length > 0) { %>
                 <% categorias_list.forEach((c, i) => { %>
 
@@ -52,7 +52,7 @@
           </div>
 
           <div>
-            <label id="directores">Directores</label><br>
+            <label id="directores">----- Directores -----</label><br>
               <% if(directores_list.length > 0) { %>
                 <% directores_list.forEach((d, i) => { %>
 
@@ -71,55 +71,9 @@
         <button class="formEntidad__submit" type="button" onclick="actualizarPelicula('<%= peli.id_pelicula %>')">Guardar Cambios</button>
 
       </form>
-
-      <script>
-        async function actualizarPelicula(id) {
-          const titulo = document.getElementById('titulo_input').value;
-          const anio = document.getElementById('anio_input').value;
-          const duracion = document.getElementById('duracion_input').value;
-
-          const radioClasificacion = document.querySelector('input[name="id_clasificacion"]:checked');
-          const id_clasificacion = radioClasificacion ? parseInt(radioClasificacion.value) : null;
-
-          const checkboxesCategorias = document.querySelectorAll('input[name="categorias"]:checked');
-          const categorias = Array.from(checkboxesCategorias).map(cb => parseInt(cb.value));
-          
-          const checkboxesDirectores = document.querySelectorAll('input[name="directores"]:checked');
-          const directores = Array.from(checkboxesDirectores).map(cb => parseInt(cb.value));
-
-          const data = {
-            titulo,
-            anio,
-            duracion,
-            id_clasificacion,
-            categorias,
-            directores
-          };
-
-          try {
-            const response = await fetch(`/peliculas/editar/${id}`, {
-              method: 'PUT',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(data)
-            });
-
-            const result = await response.json();
-
-            if (response.ok) {
-              alert("Película actualizada con éxito");
-              window.location.href = '/peliculas'; // Redirigir a la lista
-            } else {
-              // Si el servidor responde con 400 mostrar los mensajes de error
-              const mensajesError = result.result.join("\n"); 
-              alert("Error en la validación:\n" + mensajesError);
-            }
-          } catch (error) {
-            console.error("Error:", error);
-            alert("Ocurrió un problema al conectar con el servidor.");
-          }
-        }
-      </script>
-
     </main>
+    
+    <script src="/javascripts/peliculas/actualizar_peliculas.js"></script>
+
 </body>
 <%-include("../components/footer.ejs")%>

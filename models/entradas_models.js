@@ -163,7 +163,7 @@ class EntradasModel {
             [e.id_funcion, e.id_asiento]
           );
           if (existente.length > 0) {
-            throw { code: 400, message: `El asiento ${e.id_asiento} ya está ocupado para la función ${e.id_funcion}` };
+            throw { code: 400, message: `El asiento con el id ${e.id_asiento} ya está ocupado para la función con el id ${e.id_funcion}` };
           }
         }
 
@@ -186,7 +186,8 @@ class EntradasModel {
 
       } catch (err) {
         if (connection) await connection.rollback();
-        reject({ code: 500, message: err.message });
+        const statusCode = err.code || 500;
+        reject({ code: statusCode, message: err.message, result: err.result || [] });
       } finally {
         if (connection) connection.release();
       }

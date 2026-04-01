@@ -56,50 +56,10 @@
     <% } else if (typeof error_msg === 'undefined' || !error_msg) { %>
       <p>No se encontraron registros para mostrar.</p>
     <% } %>
-
-    <script>
-      const form = document.querySelector('form');
-      form.addEventListener('submit', (e) => {
-        const inicio = document.getElementsByName('inicio')[0].value;
-        const fin = document.getElementsByName('fin')[0].value;
-
-        if (new Date(inicio) > new Date(fin)) {
-          e.preventDefault();
-          alert('La fecha de inicio no puede ser mayor a la fecha de fin.');
-        }
-      });
-
-      async function eliminarVenta(boton, id) {
-        if (!confirm('¿Estás seguro de eliminar esta venta?')) return;
-
-        try {
-          const response = await fetch(`/ventas/eliminar/${id}`, {
-            method: 'DELETE', 
-            headers: {
-              'Content-Type': 'application/json'
-            }
-          });
-
-          const data = await response.json();
-
-          if (response.ok) {
-            const fila = boton.closest('tr'); //eliminar la fila de la tabla sin recargar
-            fila.remove();
-                  
-            const tbody = document.querySelector('tbody');
-            if (tbody.children.length === 0) {
-              location.reload(); 
-            }
-          } else {
-            alert(data.message || 'Error al eliminar la venta');
-          }
-        } catch (error) {
-          console.error('Error:', error);
-          alert('Hubo un problema con la conexión');
-        }
-      }
-    </script>
-    
   </main>
+
+  <script src="/javascripts/ventas/mostrar_ventas_por_rango.js"></script>
+  <script src="/javascripts/ventas/eliminar_ventas.js"></script>
+
 </body>
 <%-include("../components/footer.ejs")%>
