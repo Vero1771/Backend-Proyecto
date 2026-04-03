@@ -85,7 +85,7 @@ router.get('/ingresar', checkLoginAdmin, function (req, res, next) {
       res.render(
         './productos_views/ingresar_productos',
         {
-          title: 'Salas',
+          title: 'Productos',
           proveedores_list: proveedores.result
         }
       );
