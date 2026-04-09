@@ -455,7 +455,7 @@ Para probar las consultas de ingresar y editar de cada entidad:
 
 ### Enlace del video en YouTube
 
-[Video de Youtube](https://youtu.be/qn6Q0YKvplI?si=VLjYd-Pdj0VdqFX_)
+[Video de Youtube](https://youtu.be/zCG-483-578?si=VtV2YcmvIN-LkHnB)
 
 ---
 
